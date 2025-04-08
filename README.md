@@ -206,3 +206,21 @@ incluidas en la especificación son las siguientes:
       flujo de entrada como un publicador de un flujo de salida.
     - Es un intermediario entre productores y consumidores que permite realizar operaciones intermedias en el flujo de
       datos.
+
+## ¿Qué es la Programación Reactiva?
+
+Un paradigma de programación diseñado para procesar flujos de mensajes de manera asincrónica y sin bloqueos, al tiempo
+que se controla la contrapresión.
+
+- Se basa en el patrón de diseño Observer.
+- Para llamadas Inbound/Outbound.
+- `La programación Reactiva complementa la Programación Orientada a Objetos` al proporcionar herramientas y
+  abstracciones potentes para manejar llamadas de E/S asíncronas y administrar flujos de datos complejos en aplicaciones
+  modernas.
+
+Los pilares de la programación reactiva son:
+
+- Stream of messages
+- Non-blocking
+- Asynchronous
+- Backpressure
