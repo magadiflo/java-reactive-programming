@@ -109,3 +109,45 @@ así.
 
 > La `programación reactiva` es un modelo de programación para simplificar la comunicación `asíncrona no bloqueante`.
 
+## Patrones de comunicación
+
+A veces la gente se pregunta si realmente necesitamos la programación reactiva `¿Puedo no utilizar hilos virtuales?`
+En realidad, los hilos virtuales son geniales, pero los hilos virtuales podrían no ser suficientes.
+
+Intentamos resolver un problema distinto, voy a explicarlo ahora. Todos hemos estado escribiendo código usando el tipo
+de comunicación `request -> response`. Es decir, enviamos una solicitud y esperamos una respuesta. Así es como hemos
+estado escribiendo código durante muchos, muchos años.
+
+Si su requisito es simple como este, entonces sí, el hilo virtual es suficiente. No es necesario complicarse con la
+programación reactiva. Pero la programación reactiva abre la puerta a tres patrones de comunicación adicionales si se
+quiere `request - response`, `request - streaming response`, `streaming-request - response` y
+`bidirectional - streaming`. Así que podemos lograr cuatro patrones de comunicación diferentes utilizando la
+programación reactiva fácilmente.
+
+- El `request - streaming response`, envías una solicitud para la que obtienes respuesta múltiple. Por ejemplo,
+  supongamos que está intentando pedir una pizza, así que envía una solicitud de pedido de pizza. Ahora, enviarán
+  actualizaciones en tiempo real, como que la pizza se está preparando. Ahora está listo para su entrega. El conductor
+  está a ocho kilómetros. Al cabo de un rato, el conductor está a cuatro millas.
+
+  Así que te darán una respuesta en `streaming` a tu dispositivo móvil diciéndote que de acuerdo, ahora tu comida está
+  entregada en tu puerta. Así que envías una petición, pero recibes una respuesta periódica en `streaming`.
+
+
+- El `streaming-request - response`, enviará una solicitud de streaming al servidor remoto. Por ejemplo, puede que
+  lleves
+  un Apple Watch, imaginémoslo así, y sigue enviando la frecuencia cardiaca al servidor remoto. O estás trabajando en un
+  documento de Google y cuando escribes algo, se guarda en el servidor remoto. Así que aquí recuerde que cuando decimos
+  solicitud de streaming no estamos enviando múltiples solicitudes HTTP. Nos limitamos a abrir una única conexión a
+  través
+  de la cual enviamos múltiples mensajes de streaming al servidor
+  remoto.
+
+
+- El `streaming bidireccional`, permite que dos aplicaciones pueden hablar al igual que un ser humano en realidad pueden
+  seguir intercambiando mensajes.
+
+Este tipo de patrones de comunicación son posibles lograr fácilmente con la programación reactiva, mientras que el hilo
+virtual, la concurrencia estructurada no resuelven estos problemas.
+
+![05.png](assets/section-01/05.png)
+
