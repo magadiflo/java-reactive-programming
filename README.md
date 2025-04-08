@@ -151,3 +151,58 @@ virtual, la concurrencia estructurada no resuelven estos problemas.
 
 ![05.png](assets/section-01/05.png)
 
+## [Reactive Streams Specification](https://www.reactive-streams.org/)
+
+`Reactive Streams` es una iniciativa que busca proporcionar un estándar para el procesamiento de flujos asíncronos con
+contrapresión sin bloqueo. Esto abarca esfuerzos dirigidos a entornos de ejecución(JVM y JavaScript) así como a
+protocolos de red.
+
+Palabras claves: `Asíncrono`, `no bloqueante`, `contrapresión`.
+
+![06.png](assets/section-01/06.png)
+
+La especificación `Reactive Streams` define un conjunto estándar de interfaces para procesar flujos de datos de manera
+asíncrona y sin bloqueo, con un control adecuado de la contrapresión `(backpressure)`. Las principales interfaces
+incluidas en la especificación son las siguientes:
+
+1. `Publisher<T>`:
+    - Es el productor de datos. Emite una secuencia de elementos a los suscriptores interesados.
+    - Tiene un único método. Este método permite a los suscriptores registrarse para recibir los elementos que el
+      `Publisher` emitirá.
+   ````java
+   void subscribe(Subscriber<? super T> subscriber);
+   ````
+
+2. `Subscriber<T>`:
+    - Es el consumidor de datos. Recibe los elementos emitidos por un `Publisher`.
+    - Los métodos clave que implementa son:
+   ````java
+   void onSubscribe(Subscription s);
+   void onNext(T t);
+   void onError(Throwable t);
+   void onComplete();
+   ````
+    - `onSubscribe(Subscription s)`: Se llama cuando el `Subscriber` se suscribe y recibe un `Subscription` para
+      gestionar la comunicación con el `Publisher`.
+    - `onNext(T t)`: Se invoca cuando hay un nuevo elemento disponible.
+    - `onError(Throwable t)`: Se llama cuando ocurre un error durante el procesamiento del flujo.
+    - `onComplete()`: Se invoca cuando el `Publisher` ha emitido todos los elementos.
+
+
+3. `Subscription`:
+    - Representa la relación entre un `Subscriber` y un `Publisher`.
+    - Los métodos claves son:
+   ````java
+   void request(long n);
+   void cancel();
+   ````
+    - `request(long n)`: Controla la cantidad de elementos que el `Subscriber` quiere recibir. Es fundamental para la
+      gestión de la contrapresión.
+    - `cancel()`: Cancela la suscripción, deteniendo la emisión de más elementos.
+
+
+4. `Processor<T, R> (opcional)`:
+    - Combina las funciones de un `Publisher` y un `Subscriber`. Un `Processor` actúa tanto como un suscriptor de un
+      flujo de entrada como un publicador de un flujo de salida.
+    - Es un intermediario entre productores y consumidores que permite realizar operaciones intermedias en el flujo de
+      datos.
