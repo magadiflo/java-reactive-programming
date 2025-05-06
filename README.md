@@ -85,6 +85,12 @@ así.
    quiero llamar a una compañía de seguros para hacerle ciertas preguntas, así que le digo a un amigo que lo haga por
    mí, mientras que yo realizo otras cosas. Mi amigo, realiza la llamada, así que es él quién va a tener que esperar a
    que le contesten el teléfono y le respondan las preguntas. En este caso, yo no estoy bloqueado, pero mi amigo sí.
+   <br><br>
+   La asincronía se refiere a que una operación `se ejecuta en otro momento`, generalmente en otro hilo o después de una
+   tarea programada. Es un enfoque temporal: **“haz esto cuando puedas, y avísame”**.
+    - Puede haber código asíncrono que `sí bloquee hilos` (por ejemplo, con `Future.get()`).
+    - Puede haber código `no bloqueante pero no necesariamente asíncrono` (por ejemplo, si todo ocurre en el mismo hilo
+      pero sin detenerlo).
 
 
 3. `Non-blocking`, supongamos que vuelvo a llamar a la compañía de seguros para hacerle unas preguntas, pero la
@@ -95,7 +101,10 @@ así.
    ya están disponibles.<br><br>
    En una aplicación `no-bloqueante`, la aplicación envía la solicitud a otra aplicación, base de datos, etc. una vez
    enviada la petición, el hilo no se bloqueará, será libre de hacer lo que quiera, cualquier otra tarea. Si está
-   disponible, el sistema operativo notificará al hilo diciéndole, oye, tenemos la respuesta.
+   disponible, el sistema operativo notificará al hilo diciéndole, oye, tenemos la respuesta.<br><br>
+   Un sistema `no bloqueante` `no detiene el hilo actual` mientras espera que ocurra una operación (como leer desde la
+   red o disco). En lugar de bloquear, `registra una acción a ejecutar cuando la operación esté lista` (por ejemplo,
+   usando `callbacks` o `Publisher/Subscriber`).
 
 
 4. `no-blocking + async`, es una combinación de `non-blocking + async`. Si tienes varias CPUs, ¿por qué un hilo tiene
@@ -108,6 +117,10 @@ así.
    la respuesta para hacer uso de múltiples CPUs.
 
 > La `programación reactiva` es un modelo de programación para simplificar la comunicación `asíncrona no bloqueante`.
+>
+> Un `Flux` o `Mono` en `Project Reactor` es `por diseño no bloqueante`, y `puede o no ser asíncrono`, dependiendo de
+> cómo se configure (por ejemplo, si usas `subscribeOn` o `publishOn` para cambiar de hilo). La `asincronía` es una
+> estrategia de ejecución; la `no-bloqueante` es una característica de implementación.
 
 ## Patrones de comunicación
 
