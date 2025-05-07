@@ -10,7 +10,26 @@ public class Lec04FluxCreateDownstreamDemand {
     private static final Logger log = LoggerFactory.getLogger(Lec04FluxCreateDownstreamDemand.class);
 
     public static void main(String[] args) {
-        produceEarlyDefault();
+        produceOnDemand();
+    }
+
+    private static void produceOnDemand() {
+        SubscriberImpl subscriber = new SubscriberImpl();
+
+        Flux<String> fluxCreate = Flux.create(fluxSink -> {
+            fluxSink.onRequest(value -> {
+                for (int i = 0; i < value && !fluxSink.isCancelled(); i++) {
+                    String name = Util.faker().name().firstName();
+                    log.info("generado-onDemand: {}", name);
+                    fluxSink.next(name);
+                }
+            });
+        });
+
+        fluxCreate.subscribe(subscriber);
+        subscriber.getSubscription().request(2);
+        subscriber.getSubscription().request(2);
+        subscriber.getSubscription().cancel();
     }
 
     private static void produceEarlyDefault() {
