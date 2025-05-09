@@ -10,7 +10,7 @@ public class Lec06ErrorHandling {
     private static final Logger log = LoggerFactory.getLogger(Lec06ErrorHandling.class);
 
     public static void main(String[] args) {
-        onErrorResume2();
+        onErrorComplete();
     }
 
     private static void onErrorReturn() {
@@ -36,6 +36,12 @@ public class Lec06ErrorHandling {
                 .onErrorReturn(-5)
                 .subscribe(Util.subscriber());
 
+    }
+
+    private static void onErrorComplete() {
+        Mono.error(new RuntimeException("Error emitido intencionalmente"))
+                .onErrorComplete()
+                .subscribe(Util.subscriber());
     }
 
     private static Mono<Integer> fallback(Throwable throwable) {
