@@ -10,7 +10,7 @@ public class Lec06ErrorHandling {
     private static final Logger log = LoggerFactory.getLogger(Lec06ErrorHandling.class);
 
     public static void main(String[] args) {
-        onErrorComplete();
+        onErrorContinue();
     }
 
     private static void onErrorReturn() {
@@ -41,6 +41,16 @@ public class Lec06ErrorHandling {
     private static void onErrorComplete() {
         Mono.error(new RuntimeException("Error emitido intencionalmente"))
                 .onErrorComplete()
+                .subscribe(Util.subscriber());
+    }
+
+    private static void onErrorContinue() {
+        Flux.range(1, 10)
+                .map(value -> value == 5 ? 5 / 0 : value) //Intencional
+                .onErrorContinue((throwable, value) -> {
+                    log.error("Error ocurrido: {}", throwable.getMessage());
+                    log.error("Valor que causó el error: {}", value);
+                })
                 .subscribe(Util.subscriber());
     }
 
