@@ -32,6 +32,13 @@ public class Lec15Then {
                 .subscribe(Util.subscriber());
     }
 
+    private static void demo3() {
+        saveRecords(List.of("a", "b", "c"))  //Flux<String>
+                .doOnNext(log::info)
+                .then()                                         //Mono<Void>
+                .subscribe(Util.subscriber());
+    }
+
     private static Flux<String> saveRecords(List<String> records) {
         return Flux.fromIterable(records)
                 .map(record -> "Guardado " + record)
