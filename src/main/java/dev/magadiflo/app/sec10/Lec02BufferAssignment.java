@@ -1,8 +1,8 @@
 package dev.magadiflo.app.sec10;
 
 import dev.magadiflo.app.common.Util;
-import dev.magadiflo.app.sec10.assignment.BookOrder;
-import dev.magadiflo.app.sec10.assignment.RevenueReport;
+import dev.magadiflo.app.sec10.assignment.buffer.BookOrder;
+import dev.magadiflo.app.sec10.assignment.buffer.RevenueReport;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;

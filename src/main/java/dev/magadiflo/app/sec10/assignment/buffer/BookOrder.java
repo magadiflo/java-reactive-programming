@@ -1,4 +1,4 @@
-package dev.magadiflo.app.sec10.assignment;
+package dev.magadiflo.app.sec10.assignment.buffer;
 
 import dev.magadiflo.app.common.Util;
 
