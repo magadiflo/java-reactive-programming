@@ -11,13 +11,13 @@ public class Lec04ContextRateLimiterDemo {
 
     public static void main(String[] args) {
         ExternalServiceClient client = new ExternalServiceClient();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             client.getBook()
-                    .contextWrite(Context.of("user", "mike"))
+                    .contextWrite(Context.of("user", "sam"))
                     .subscribe(Util.subscriber());
+            Util.sleepSeconds(1);
         }
 
-        Util.sleepSeconds(5);
     }
 
 }
