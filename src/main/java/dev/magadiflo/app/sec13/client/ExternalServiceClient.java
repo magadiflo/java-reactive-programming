@@ -11,6 +11,8 @@ public class ExternalServiceClient extends AbstractHttpClient {
                 .uri("/demo07/book")
                 .responseContent()
                 .asString()
+                .startWith(RateLimiter.limitCalls())
+                .contextWrite(UserService.userCategoryContext())
                 .next();
     }
 
