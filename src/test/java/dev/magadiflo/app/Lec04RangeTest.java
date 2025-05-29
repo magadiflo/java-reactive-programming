@@ -23,4 +23,16 @@ class Lec04RangeTest {
                 .expectNextCount(49)
                 .verifyComplete();
     }
+
+    @Test
+    void rangeTest2() {
+        // given
+        // when
+        Flux<Integer> items = getRandomItems();
+
+        // then
+        StepVerifier.create(items)
+                .thenConsumeWhile(i -> i > 0 && i < 101)
+                .verifyComplete();
+    }
 }
