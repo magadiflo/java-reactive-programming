@@ -62,9 +62,30 @@ así.
 ### Java (Platform) Thread
 
 - `Java Thread` fue introducido hace 25 años.
-- El `Java Thread` es simplemente una envoltura alrededor del hilo del `SO`, por lo que `1 Java Thread = 1 OS Thread`.
-- Recuerda: El OS Thread es la unidad del Scheduling.
-- La memoria se determina cuando se inicia el proceso o se crea un hilo.
+
+
+- Un `Java Thread` es simplemente una envoltura (`wrapper`) sobre un hilo del sistema operativo, por lo tanto:
+  `1 Java Thread = 1 OS Thread`. Es decir, cuando creamos un `new Thread()` en Java, internamente se genera un hilo a
+  nivel del sistema operativo que se comporta como una `unidad de ejecución independiente`.
+
+
+- Recuerda: el `OS Thread` (hilo del sistema operativo) es la verdadera unidad de scheduling. En otras palabras, el
+  sistema operativo es quien decide cuándo y cómo se ejecutan los hilos, no la JVM directamente.
+
+
+- La memoria asociada a un hilo (como su pila) se asigna cuando se inicia el proceso o se crea un nuevo hilo.
+
+### ¿Qué es un hilo (Thread)?
+
+**Un `hilo` es la unidad más pequeña de ejecución dentro de un proceso**. Cada hilo tiene su propia secuencia de
+instrucciones, su contador de programa y su pila, pero comparte la memoria y los recursos del proceso principal con
+otros hilos.
+
+Esto permite que varios hilos trabajen concurrentemente dentro del mismo programa, lo que es útil para hacer múltiples
+tareas al mismo tiempo, como leer datos, procesarlos y escribir resultados, todo en paralelo.
+
+En `Java`, cuando hablamos de un `Thread`, nos referimos a un hilo gestionado por el sistema operativo, ya que
+`cada Java Thread está directamente asociado a un hilo del sistema operativo (OS Thread)`.
 
 ## Inbound/Outbound (entradas/salidas)
 
