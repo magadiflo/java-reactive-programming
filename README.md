@@ -62,65 +62,127 @@ así.
 ### Java (Platform) Thread
 
 - `Java Thread` fue introducido hace 25 años.
-- El `Java Thread` es simplemente una envoltura alrededor del hilo del `SO`, por lo que `1 Java Thread = 1 OS Thread`.
-- Recuerda: El OS Thread es la unidad del Scheduling.
-- La memoria se determina cuando se inicia el proceso o se crea un hilo.
 
-## Inbound/Outbound (entradas/salidas)
 
-1. Sync
-2. Async
-3. non-blocking
-4. non-blocking + async
+- Un `Java Thread` es simplemente una envoltura (`wrapper`) sobre un hilo del sistema operativo, por lo tanto:
+  `1 Java Thread = 1 OS Thread`. Es decir, cuando creamos un `new Thread()` en Java, internamente se genera un hilo a
+  nivel del sistema operativo que se comporta como una `unidad de ejecución independiente`.
+
+
+- Recuerda: el `OS Thread` (hilo del sistema operativo) es la verdadera unidad de scheduling. En otras palabras, el
+  sistema operativo es quien decide cuándo y cómo se ejecutan los hilos, no la JVM directamente.
+
+
+- La memoria asociada a un hilo (como su pila) se asigna cuando se inicia el proceso o se crea un nuevo hilo.
+
+### ¿Qué es un hilo (Thread)?
+
+**Un `hilo` es la unidad más pequeña de ejecución dentro de un proceso**. Cada hilo tiene su propia secuencia de
+instrucciones, su contador de programa y su pila, pero comparte la memoria y los recursos del proceso principal con
+otros hilos.
+
+Esto permite que varios hilos trabajen concurrentemente dentro del mismo programa, lo que es útil para hacer múltiples
+tareas al mismo tiempo, como leer datos, procesarlos y escribir resultados, todo en paralelo.
+
+En `Java`, cuando hablamos de un `Thread`, nos referimos a un hilo gestionado por el sistema operativo, ya que
+`cada Java Thread está directamente asociado a un hilo del sistema operativo (OS Thread)`.
+
+## Inbound/Outbound (Entradas/Salidas)
+
+En programación (y en particular en sistemas de red, I/O y programación reactiva), es importante entender cuatro
+conceptos fundamentales:
+
+1. Síncrono (Sync)
+2. Asíncrono (Async)
+3. No bloqueante (Non-blocking)
+4. No bloqueante + Asíncrono (Non-blocking + Async)
 
 ![04.png](assets/section-01/04.png)
 
-1. `Sync`, la primera es muy simple, una comunicación de bloqueo síncrono directo, que todos hemos estado haciendo. La
-   aplicación envía una solicitud a otra aplicación. El hilo permanecerá inactivo hasta que reciba la respuesta, no
-   puede hacer otra cosa. Se trata pues, de una `comunicación síncrona de bloqueo`.
+### 1. Síncrono (Sync)
 
+Una comunicación síncrona y bloqueante es la más simple y tradicional. La aplicación `app1` envía una solicitud a la
+aplicación `app2`, y el hilo que hace la llamada queda bloqueado esperando una respuesta.
 
-2. `Async`, un hilo puede crear otro hilo para delegar la tarea y hacer las cosas de forma asíncrona. Pero, quien quiera
-   que esté realizando la tarea desde su perspectiva, estará bloqueado de todos modos. Por ejemplo. Supongamos que
-   quiero llamar a una compañía de seguros para hacerle ciertas preguntas, así que le digo a un amigo que lo haga por
-   mí, mientras que yo realizo otras cosas. Mi amigo, realiza la llamada, así que es él quién va a tener que esperar a
-   que le contesten el teléfono y le respondan las preguntas. En este caso, yo no estoy bloqueado, pero mi amigo sí.
-   <br><br>
-   La asincronía se refiere a que una operación `se ejecuta en otro momento`, generalmente en otro hilo o después de una
-   tarea programada. Es un enfoque temporal: **“haz esto cuando puedas, y avísame”**.
-    - Puede haber código asíncrono que `sí bloquee hilos` (por ejemplo, con `Future.get()`).
-    - Puede haber código `no bloqueante pero no necesariamente asíncrono` (por ejemplo, si todo ocurre en el mismo hilo
-      pero sin detenerlo).
+Ese hilo `no puede hacer nada más` hasta que reciba dicha respuesta.
 
+> 🧠 Es lo que hacemos habitualmente con código como `String result = service.call();`
 
-3. `Non-blocking`, supongamos que vuelvo a llamar a la compañía de seguros para hacerle unas preguntas, pero la
-   contestadora me indica que nadie está disponible en ese momento para atenderme, pero que deje mi número de teléfono
-   para que apenas alguien esté disponible me llame. Mientras eso sucede, yo puedo seguir haciendo mis cosas con
-   normalidad.<br><br>
-   En este caso, envié una solicitud y no estoy bloqueado, pero después de algún tiempo se me notifica para indicar que
-   ya están disponibles.<br><br>
-   En una aplicación `no-bloqueante`, la aplicación envía la solicitud a otra aplicación, base de datos, etc. una vez
-   enviada la petición, el hilo no se bloqueará, será libre de hacer lo que quiera, cualquier otra tarea. Si está
-   disponible, el sistema operativo notificará al hilo diciéndole, oye, tenemos la respuesta.<br><br>
-   Un sistema `no bloqueante` `no detiene el hilo actual` mientras espera que ocurra una operación (como leer desde la
-   red o disco). En lugar de bloquear, `registra una acción a ejecutar cuando la operación esté lista` (por ejemplo,
-   usando `callbacks` o `Publisher/Subscriber`).
+`Ejemplo real`: Llamas a una compañía de seguros y esperas en la línea hasta que alguien atienda y te responda. Mientras
+tanto, no haces nada más.
 
+### 2. Asíncrono (Async)
 
-4. `no-blocking + async`, es una combinación de `non-blocking + async`. Si tienes varias CPUs, ¿por qué un hilo tiene
-   que hacer todo el trabajo?, también podemos tener más hilos.<br><br>
-   Supongamos que llamo a la compañía de seguros y me dicen, dame tu número, te llamaremos. Ahora, en lugar de dar mi
-   número, le doy el de mi amigo para que le devuelvan la llamada. Así que en este caso no estoy bloqueado, mi amigo
-   tampoco está bloqueado, pero recibiría la llamada cuando la compañía de seguros esté disponible.<br><br>
-   Entonces, aquí un hilo envía una petición a otra aplicación. La respuesta puede tardar un poco, llevará algún tiempo.
-   Hasta entonces el hilo no está bloqueado. Cuando la respuesta vuelve, el SO notificará a un hilo diferente que maneje
-   la respuesta para hacer uso de múltiples CPUs.
+La `asincronía` significa que una operación se ejecuta `en otro momento`. Por lo general, se delega a otro hilo para que
+se encargue de ella, y quien la delega puede continuar trabajando mientras tanto.
 
-> La `programación reactiva` es un modelo de programación para simplificar la comunicación `asíncrona no bloqueante`.
->
-> Un `Flux` o `Mono` en `Project Reactor` es `por diseño no bloqueante`, y `puede o no ser asíncrono`, dependiendo de
-> cómo se configure (por ejemplo, si usas `subscribeOn` o `publishOn` para cambiar de hilo). La `asincronía` es una
-> estrategia de ejecución; la `no-bloqueante` es una característica de implementación.
+`Importante`: Aunque el hilo principal no esté bloqueado, `el hilo delegado sí lo puede estar`.
+
+> 🧠 La asincronía se refiere al tiempo (“haz esto cuando puedas”), no al uso eficiente de hilos.
+
+`Ejemplo real`: Quieres llamar a la compañía de seguros, pero le pides a un amigo que lo haga por ti. Tú puedes seguir
+con tus cosas, pero ahora tu amigo está bloqueado esperando en la línea.
+
+Notas adicionales:
+
+- Puede haber asincronía bloqueante, como `Future.get()` (el hilo se detiene esperando el resultado).
+- También puede haber asincronía no bloqueante, cuando se usan mecanismos como `CompletableFuture.thenApply()` o `Mono`.
+
+### 3. No bloqueante (Non-blocking)
+
+Una operación `no bloqueante` no detiene el hilo actual, sino que simplemente registra una acción a ejecutar cuando la
+operación esté lista (usando callbacks, listeners, o Publishers como en Reactor).
+
+> 🧠 Esto se refiere a `no bloquear el hilo actual`, pero no necesariamente implica asincronía.
+
+`Ejemplo real`: Llamas a la compañía de seguros y te dice una contestadora: "Todos nuestros agentes están ocupados,
+deja tu número y te llamaremos". Tú dejas tu número y sigues con tu día.
+`Nadie (ni tú ni otro hilo) está esperando activamente`.
+
+### 4. No bloqueante + Asíncrono (Non-blocking + Async)
+
+Esta es la forma `más eficiente y escalable`: no solo el hilo actual no queda bloqueado, sino que otro hilo libre
+manejará la respuesta cuando esté lista. Esto permite aprovechar múltiples núcleos de CPU de forma efectiva.
+
+`Ejemplo real`: Llamas a la compañía de seguros, y en lugar de dejar tu número, le das el de tu amigo. Cuando estén
+disponibles, lo llaman a él. Ni tú ni tu amigo están bloqueados activamente, pero cuando llegue la respuesta, otro
+actor (tu amigo) la maneja.
+
+> 🧠 Es lo que hace Reactor, usando `Schedulers`, `Operators` y `Event Loops`.
+
+### Relación con la Programación Reactiva
+
+La programación reactiva es un modelo diseñado para simplificar la comunicación asíncrona y no bloqueante, permitiendo
+construir sistemas más eficientes, escalables y receptivos.
+
+En `Project Reactor`:
+
+- Un `Mono` o un `Flux` es siempre no bloqueante por diseño.
+- Sin embargo, pueden ser síncronos o asíncronos, dependiendo de cómo se configure el pipeline:
+    - Si usas `subscribeOn` o `publishOn`, cambias el hilo de ejecución y haces la operación asíncrona.
+    - Si no cambias de hilo, puede comportarse de forma síncrona pero no bloqueante.
+
+📌 Clave para entenderlo bien:
+
+- `Asincronía es una estrategia de cuándo ejecutar algo`: no lo haces ahora mismo, sino que lo programas para más tarde
+  (por ejemplo, en otro hilo o cuando haya disponibilidad).
+- `No bloqueante se refiere a cómo se espera el resultado`: en lugar de detener el hilo mientras se completa una
+  operación, se continúa con otras tareas y se registra una acción (como un callback) para manejar la respuesta cuando
+  esté lista.
+
+➕ Puedes tener:
+
+- `Código asíncrono pero bloqueante`: Por ejemplo, usar `Future.get()` **bloquea el hilo que espera el resultado.**
+- `Código no bloqueante pero síncrono`: Como `Mono.just("OK")`, que no bloquea, pero tampoco cambia de hilo (todo
+  ocurre en el mismo hilo, inmediatamente).
+- `Código asíncrono y no bloqueante`: Lo ideal en programación reactiva. Por ejemplo:
+    ````bash
+    Mono.fromCallable(() -> llamadaALaAPI())
+        .subscribeOn(Schedulers.boundedElastic()) // se ejecuta en otro hilo (asincronía)
+        .subscribe(resultado -> System.out.println("Recibido: " + resultado));
+    ````
+  Aquí, el trabajo se hace en un hilo aparte sin bloquear el principal. Reactor gestiona todo de forma eficiente y
+  reactiva.
 
 ## Patrones de comunicación
 
